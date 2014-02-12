@@ -17,6 +17,7 @@
         embedCSS: true,
         sectionCSS: 'display: block; width: 100%;',
         startOpen: false,
+        reclose: true,
         expandedClass: 'readmore-js-expanded',
         collapsedClass: 'readmore-js-collapsed',
 
@@ -84,7 +85,7 @@
           current.addClass('readmore-js-section ' + $this.options.collapsedClass).data('collapsedHeight', maxHeight);
 
           var useLink = $this.options.startOpen ? $this.options.lessLink : $this.options.moreLink;
-          current.after($(useLink).on('click', function(event) { $this.toggleSlider(this, current, event) }).addClass('readmore-js-toggle'));
+          current.after($(useLink).on('click', function(event) { $this.toggleSlider(this, current, event, $this.options.reclose); }).addClass('readmore-js-toggle'));
 
           if(!$this.options.startOpen) {
             current.css({height: maxHeight});
@@ -97,7 +98,7 @@
       });
     },
 
-    toggleSlider: function(trigger, element, event)
+    toggleSlider: function(trigger, element, event, reclose)
     {
       event.preventDefault();
 
@@ -107,7 +108,7 @@
           collapsedHeight = $(element).data('collapsedHeight');
 
       if ($(element).height() <= collapsedHeight) {
-        newHeight = $(element).data('expandedHeight') + 'px';
+        newHeight = 100 + "%";
         newLink = 'lessLink';
         expanded = true;
         sectionClass = $this.options.expandedClass;
@@ -126,7 +127,12 @@
           // Fire afterToggle callback
           $this.options.afterToggle(trigger, element, expanded);
 
-          $(trigger).replaceWith($($this.options[newLink]).on('click', function(event) { $this.toggleSlider(this, element, event) }).addClass('readmore-js-toggle'));
+          if (reclose) {
+            $(trigger).replaceWith($($this.options[newLink]).on('click', function(event) { $this.toggleSlider(this, element, event, reclose); }).addClass('readmore-js-toggle'));
+          }
+          else {
+            $(trigger).hide();
+          }
 
           $(this).removeClass($this.options.collapsedClass + ' ' + $this.options.expandedClass).addClass(sectionClass);
         }
@@ -188,5 +194,5 @@
         }
       });
     }
-  }
+  };
 })(jQuery);
